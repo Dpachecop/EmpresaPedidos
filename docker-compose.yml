@@ -1,0 +1,29 @@
+services:
+  # Servicio 1: Nuestra Aplicación Spring Boot
+  app-backend:
+    build: .
+    container_name: logistica-backend
+    ports:
+      - "8080:8080" # Expone el puerto 8080 de tu PC al 8080 del contenedor
+    environment:
+      # Sobrescribimos la configuración de application.properties para usar el nombre del contenedor de la BD
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/logistica_db?createDatabaseIfNotExist=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysqldb # Espera a que la base de datos inicie
+
+  # Servicio 2: Base de Datos MySQL
+  mysqldb:
+    image: mysql:8.0
+    container_name: logistica-db
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=logistica_db
+    volumes:
+      - mysql-data:/var/lib/mysql # Esto guarda los datos aunque apagues el contenedor
+
+volumes:
+  mysql-data:
